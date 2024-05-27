@@ -171,9 +171,32 @@ const WebcamDisplay = () => {
       };
 
     const callImageGenAPI = async(scrible) => {
-        console.log("Image generation called")
-        //TODO: Implement the API call to the image generation model
-        
+        console.log("Image generation called");
+
+        const requestData = {
+            scribble: imageUrl,
+            prompt: prompt
+        };
+
+        fetch('https://45ee-34-168-45-4.ngrok-free.app/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if(!response.ok) {
+                throw new Error('Network response was not ok')
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response from API: ', data);
+        })
+        .catch(error => {
+            console.error('Theere was a problem with the fetch operation: ', error);
+        });
     };
 
     return (
