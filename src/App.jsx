@@ -13,9 +13,12 @@ const WebcamDisplay = () => {
     const [recordedPoints, setRecordedPoints] = useState([]);
     
     const [imageUrl, setImageUrl] = useState(null); // State to hold the image URL
+    const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
 
     const [generateBtnText, setGenerateBtnText] = useState("Generate");
     const [prompt, setPrompt] = useState("bus");
+    const [additionalPrompt, setAdditionalPrompt] = useState("high quality, best quality, detailed");
+    const [negativePrompt, setNegativePrompt] = useState("low quality, blurry, lowres");
     
     useEffect(() => {
         let handLandmarker;
@@ -178,7 +181,7 @@ const WebcamDisplay = () => {
             prompt: prompt
         };
 
-        fetch('https://45ee-34-168-45-4.ngrok-free.app/generate', {
+        fetch('https://7e04-34-168-45-4.ngrok-free.app/generate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -186,16 +189,18 @@ const WebcamDisplay = () => {
             body: JSON.stringify(requestData)
         })
         .then(response => {
+            setGenerateBtnText('Generate');
             if(!response.ok) {
-                throw new Error('Network response was not ok')
+                throw new Error('Network response was not ok.')
             }
             return response.json();
         })
         .then(data => {
             console.log('Response from API: ', data);
+            setGeneratedImageUrl(data['image'])
         })
         .catch(error => {
-            console.error('Theere was a problem with the fetch operation: ', error);
+            console.error('There was a problem with the fetch operation: ', error);
         });
     };
 
@@ -233,10 +238,19 @@ const WebcamDisplay = () => {
         <div>
             <label htmlFor="prompt">Prompt:</label>
             <input className="textbox" type="text" id="prompt" name="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
-            {/*TODO: Add more inputs here */}
-            </div>
+            <label htmlFor="prompt">Additional prompt:</label>
+            <input className="textbox" type="text" id="prompt" name="prompt" value={additionalPrompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
+            <label htmlFor="prompt">Negative prompt:</label>
+            <input className="textbox" type="text" id="prompt" name="prompt" value={negativePrompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
+        </div>
         {/*<p className='small'>Recorded Points: {JSON.stringify(recordedPoints)}</p>*/}
         {imageUrl && <img className='video' src={imageUrl} alt="Scribble Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
+        <div className="gen-img-container">
+            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
+            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
+            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
+            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
+        </div>
       </header>
     </div>
     );
