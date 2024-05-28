@@ -9,6 +9,7 @@ const WebcamDisplay = () => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const scribbleCanvasRef = useRef(null);
+    const [generateBtnDisabled, setGenerateBtnDisadbled] = useState(false);
     const [handPresence, setHandPresence] = useState(null);
     const [recordedPoints, setRecordedPoints] = useState([]);
     
@@ -170,6 +171,7 @@ const WebcamDisplay = () => {
     }, [recordedPoints]);
 
     const generateImage = () => {
+        setGenerateBtnDisadbled(true);
         setGenerateBtnText('Generating...');
         var canvas = scribbleCanvasRef.current;
         const scrible = canvas.toDataURL("image/png");
@@ -197,6 +199,7 @@ const WebcamDisplay = () => {
         })
         .then(response => {
             setGenerateBtnText('Generate');
+            setGenerateBtnDisadbled(false);
             if(!response.ok) {
                 throw new Error('Network response was not ok.')
             }
@@ -305,7 +308,7 @@ const WebcamDisplay = () => {
                     <div>
                         <button className='button-6' onClick={() => {setRecordedPoints([]); drawScribble([])}}>Clear</button>
                         <button className='button-6' onClick={() => saveScribble()}>Save</button>
-                        <button className='button-6' onClick={generateImage}>{generateBtnText}</button>
+                        <button className='button-6' onClick={generateImage} disabled={generateBtnDisabled}>{generateBtnText}</button>
                     </div>
                     <label htmlFor="prompt">Prompt:</label>
                     <input className="textbox" type="text" id="prompt" name="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
