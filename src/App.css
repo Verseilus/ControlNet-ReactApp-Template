@@ -108,20 +108,3 @@
   color: rgba(0, 0, 0, 0.65);
   transform: translateY(0);
 }
-
-.gen-img-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
-  justify-items: stretch;
-  align-items: stretch;
-}
-
-.gen_img {
-  display: flex;
-  margin: '0 auto';
-  border: 1px solid rgb(255, 255, 255);
-  border-radius: .25rem;
-}

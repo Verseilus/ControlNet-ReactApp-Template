@@ -13,7 +13,10 @@ const WebcamDisplay = () => {
     const [recordedPoints, setRecordedPoints] = useState([]);
     
     const [imageUrl, setImageUrl] = useState(null); // State to hold the image URL
-    const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
+    const [generatedImageOneUrl, setGeneratedImageOneUrl] = useState(null);
+    const [generatedImageTwoUrl, setGeneratedImageTwoUrl] = useState(null);
+    const [generatedImageThreeUrl, setGeneratedImageThreeUrl] = useState(null);
+    const [generatedImageFourUrl, setGeneratedImageFourUrl] = useState(null);
 
     const [generateBtnText, setGenerateBtnText] = useState("Generate");
     const [prompt, setPrompt] = useState("bus");
@@ -130,7 +133,7 @@ const WebcamDisplay = () => {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle = "blue";
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 4;
         ctx.beginPath();
 
         let firstPoint = true;  // Flag to indicate if this is the first point in the array
@@ -178,10 +181,14 @@ const WebcamDisplay = () => {
 
         const requestData = {
             scribble: imageUrl,
-            prompt: prompt
+            prompt: prompt,
+            additional_prompt: additionalPrompt,
+            negative_prompt: negativePrompt
         };
 
-        fetch('https://7e04-34-168-45-4.ngrok-free.app/generate', {
+        console.log(JSON.stringify(requestData))
+
+        fetch('https://fc64-34-142-133-207.ngrok-free.app/generate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -197,7 +204,10 @@ const WebcamDisplay = () => {
         })
         .then(data => {
             console.log('Response from API: ', data);
-            setGeneratedImageUrl(data['image'])
+            setGeneratedImageOneUrl(data['image1'])
+            setGeneratedImageTwoUrl(data['image2'])
+            setGeneratedImageThreeUrl(data['image3'])
+            setGeneratedImageFourUrl(data['image4'])
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation: ', error);
@@ -205,7 +215,7 @@ const WebcamDisplay = () => {
     };
 
     return (
-    <div className="App">
+    /*<div className="App">
       <header className="App-header">   
         <h1>Doodle by hand to image</h1>
         <div style={{ position: "relative" }}>
@@ -239,19 +249,73 @@ const WebcamDisplay = () => {
             <label htmlFor="prompt">Prompt:</label>
             <input className="textbox" type="text" id="prompt" name="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
             <label htmlFor="prompt">Additional prompt:</label>
-            <input className="textbox" type="text" id="prompt" name="prompt" value={additionalPrompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
+            <input className="textbox" type="text" id="prompt" name="prompt" value={additionalPrompt} onChange={(e) => setAdditionalPrompt(e.target.value)}/><br/>
             <label htmlFor="prompt">Negative prompt:</label>
-            <input className="textbox" type="text" id="prompt" name="prompt" value={negativePrompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
+            <input className="textbox" type="text" id="prompt" name="prompt" value={negativePrompt} onChange={(e) => setNegativePrompt(e.target.value)}/><br/>
         </div>
-        {/*<p className='small'>Recorded Points: {JSON.stringify(recordedPoints)}</p>*/}
-        {imageUrl && <img className='video' src={imageUrl} alt="Scribble Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
+        {imageUrl && <img className='video' src={imageUrl} alt="Scribble Image" style={{backgroundColor: 'white'}}/>}
         <div className="gen-img-container">
-            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
-            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
-            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
-            {generatedImageUrl && <img className='gen-img' src={generatedImageUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>} {/* Display the image if imageUrl is not null */}
+            {generatedImageOneUrl && <img className='gen-img' src={generatedImageOneUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
+            {generatedImageTwoUrl && <img className='gen-img' src={generatedImageTwoUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
+            {generatedImageThreeUrl && <img className='gen-img' src={generatedImageThreeUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
+            {generatedImageFourUrl && <img className='gen-img' src={generatedImageFourUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
         </div>
       </header>
+    </div>*/
+    <div className="App">
+        <h1>Doodle by hand to image</h1>
+        <div className="container">
+            <div className="div2">
+                <div style={{ position: "relative" }}>
+                    <video className='video'
+                    ref={videoRef}
+                    width="640"
+                    height="480"
+                    autoPlay
+                    playsInline
+                    muted // Mute the video to avoid feedback noise
+                    ></video>
+                    <canvas className='video'
+                        ref={canvasRef}
+                        width="640"
+                        height="480"
+                        style={{ position: "absolute", top: 0, left: 0 }}
+                    ></canvas>
+                    <canvas className='video'
+                        ref={scribbleCanvasRef}
+                        width="640"
+                        height="480"
+                        style={{ position: "absolute", top: 0, left: 0 }}
+                    ></canvas>
+                </div>
+            </div>
+            <div className="div3">
+                {imageUrl && <img className='video' src={imageUrl} alt="Scribble Image" style={{backgroundColor: 'white'}}/>}
+            </div>
+            <div className="div4">
+                <div className="gen-img-container">
+                    {generatedImageOneUrl && <img className='gen-img' src={generatedImageOneUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
+                    {generatedImageTwoUrl && <img className='gen-img' src={generatedImageTwoUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
+                    {generatedImageThreeUrl && <img className='gen-img' src={generatedImageThreeUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
+                    {generatedImageFourUrl && <img className='gen-img' src={generatedImageFourUrl} alt="Generated Image" style={{backgroundColor: 'white'}}/>}
+                </div>
+            </div>
+            <div className="div1">
+                <div className="App-header">
+                    <div>
+                        <button className='button-6' onClick={() => {setRecordedPoints([]); drawScribble([])}}>Clear</button>
+                        <button className='button-6' onClick={() => saveScribble()}>Save</button>
+                        <button className='button-6' onClick={generateImage}>{generateBtnText}</button>
+                    </div>
+                    <label htmlFor="prompt">Prompt:</label>
+                    <input className="textbox" type="text" id="prompt" name="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)}/><br/>
+                    <label htmlFor="prompt">Additional prompt:</label>
+                    <input className="textbox" type="text" id="prompt" name="prompt" value={additionalPrompt} onChange={(e) => setAdditionalPrompt(e.target.value)}/><br/>
+                    <label htmlFor="prompt">Negative prompt:</label>
+                    <input className="textbox" type="text" id="prompt" name="prompt" value={negativePrompt} onChange={(e) => setNegativePrompt(e.target.value)}/><br/>
+                </div>
+            </div>
+        </div>
     </div>
     );
 };
